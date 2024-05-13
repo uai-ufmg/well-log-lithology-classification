@@ -1,0 +1,11 @@
+pandas>=2.2.1
+scikit-learn>=1.4.1.post1
+torch
+torchvision
+lasio
+tqdm>=4.65.0
+xgboost>=1.7.5
+matplotlib>=3.7.2
+pyyaml>=6.0.1
+requests
+gdown
