@@ -1,10 +1,13 @@
 import os
 
-import lasio
 import json
 import pandas as pd
 import numpy as np
-from tqdm import tqdm
+import zipfile
+from urllib.parse import urljoin
+import requests
+
+from io import BytesIO
 
 from sklearn.preprocessing import LabelEncoder
 
@@ -55,11 +58,13 @@ class Force(Data):
                 - data (pd.DataFrame): Well log dataset fully configured to be used
                 - le (LabelEncoder): Label Encoder used to encode lithology classes to consecutive numbers
         """
-        
-        train_data = pd.read_csv( os.path.join(self.directory, 'train.csv'), sep=';' )
-        hidden_test = pd.read_csv( os.path.join(self.directory, 'hidden_test.csv'), sep=';' )
-        leaderboard_test_features = pd.read_csv( os.path.join(self.directory, 'leaderboard_test_features.csv'), sep=';' )
-        leaderboard_test_target = pd.read_csv( os.path.join(self.directory, 'leaderboard_test_target.csv'), sep=';' )
+        r = requests.get(urljoin(self.directory, 'train.zip'))
+        files = zipfile.ZipFile(BytesIO(r.content))
+
+        train_data = pd.read_csv( files.open('train.csv'), sep=';' )
+        hidden_test = pd.read_csv( urljoin(self.directory, 'hidden_test.csv'), sep=';' )
+        leaderboard_test_features = pd.read_csv( urljoin(self.directory, 'leaderboard_test_features.csv'), sep=';' )
+        leaderboard_test_target = pd.read_csv( urljoin(self.directory, 'leaderboard_test_target.csv'), sep=';' )
 
 
         ## A little of consistency checking

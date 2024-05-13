@@ -1,5 +1,5 @@
 dataset: 'force'
-data_dir: '/pgeoprj/godeep/ej44/datasets/force'
+data_dir: 'https://raw.githubusercontent.com/bolgebrygg/Force-2020-Machine-Learning-competition/master/lithology_competition/data/'
 logs: 
 - 'GR'
 - 'RHOB'
