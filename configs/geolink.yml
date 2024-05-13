@@ -1,5 +1,5 @@
 dataset: 'geolink'
-data_dir: '/pgeoprj/godeep/ej44/datasets/geolink/LAS_files'
+data_dir: 'https://drive.google.com/uc?id='
 logs: 
 - 'GR'
 - 'RHOB'

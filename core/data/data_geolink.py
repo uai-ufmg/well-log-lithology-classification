@@ -5,6 +5,9 @@ import json
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
+import zipfile
+
+import gdown
 
 from sklearn.preprocessing import LabelEncoder
 
@@ -94,7 +97,22 @@ class Geolink(Data):
                 - data (pd.DataFrame): Well log dataset fully configured to be used
                 - le (LabelEncoder): Label Encoder used to encode lithology classes to consecutive numbers
         """
-        
+        dataset_file = os.path.join('datasets', 'geolink.zip')
+        print(os.getcwd())
+
+        if not os.path.exists('datasets'):
+            os.mkdir('datasets')
+            gdown.download(f'{self.directory}1ZvLG1SRBQB4mDUmPHSc_6kP-ubS5uNCv', dataset_file, quiet=False)
+            with zipfile.ZipFile(dataset_file, 'r') as zip_ref:
+                zip_ref.extractall(os.path.join('datasets', 'geolink'))
+        else:
+            if not os.path.isfile(dataset_file):
+                gdown.download(f'{self.directory}1ZvLG1SRBQB4mDUmPHSc_6kP-ubS5uNCv', dataset_file, quiet=False)
+                with zipfile.ZipFile(dataset_file, 'r') as zip_ref:
+                    zip_ref.extractall(os.path.join('datasets', 'geolink'))
+
+        self.directory = os.path.join('datasets', 'geolink')
+
         list_wells_files = os.listdir(self.directory)
 
         f = os.path.join(self.directory, list_wells_files[0])
