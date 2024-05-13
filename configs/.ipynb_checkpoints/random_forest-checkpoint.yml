@@ -1,0 +1,10 @@
+n_estimators: 300
+criterion: "entropy"
+max_features: 'sqrt'
+max_depth: 10
+class_weight: null
+min_samples_split: 2
+min_samples_leaf: 1
+max_leaf_nodes: null
+bootstrap: false
+max_samples: null

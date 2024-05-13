@@ -1,0 +1,11 @@
+lr: 0.0001
+weight_decay: 0.00001
+batch_size: 64
+epochs: 50
+
+#RNNs
+hidden_size: 100
+num_layers: 2
+batch_first: true
+dropout: 0.5
+bidirectional: true

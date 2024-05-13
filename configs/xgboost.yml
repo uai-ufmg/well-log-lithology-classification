@@ -1,0 +1,44 @@
+# Optional[int]. Maximum tree depth for base learners.
+n_estimators: 100
+
+# Maximum depth of a tree.
+max_depth: 5
+
+# Maximum number of nodes to be added.
+max_leaves: 0
+
+# Controls a way new nodes are added to the tree.
+grow_policy: 'depthwise'
+
+# Which booster to use. Can be gbtree, gblinear or dart
+booster: 'gbtree'
+
+# MANY OPTIONS
+objective: 'multi:softprob'
+
+# MANY OPTIONS. Evaluation metrics for validation data, a default metric will be assigned according to objective (rmse for regression, and logloss for classification, mean average precision for rank:map, etc.)
+eval_metric: 'merror'
+
+# Step size shrinkage used in update to prevents overfitting.
+eta: 0.1
+
+# Minimum sum of instance weight (hessian) needed in a child.
+min_child_weight: 1
+
+# Maximum delta step we allow each leaf output to be.
+max_delta_step: 0
+
+# Subsample ratio of the training instances.
+subsample: 1
+
+# Subsample ratio of columns when constructing each tree.
+colsample_bytree: 1
+
+# Minimum loss reduction required to make a further partition on a leaf node of the tree.
+gamma: 0
+
+# L1 regularization term on weights.
+reg_alpha: 0
+
+# L2 regularization term on weights.
+reg_lambda: 1

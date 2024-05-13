@@ -1,0 +1,60 @@
+# array-like of shape(n_layers - 2,), default=(100,). The ith element represents the number of neurons in the ith hidden layer.
+hidden_layer_sizes:
+- 15
+
+# {‘identity’, ‘logistic’, ‘tanh’, ‘relu’}, default=’relu’. Activation function for the hidden layer.
+activation: 'relu'
+
+# {‘lbfgs’, ‘sgd’, ‘adam’}, default=’adam’. The solver for weight optimization.
+solver: 'adam'
+
+# float, default=0.0001. Strength of the L2 regularization term.
+alpha: 0.0001
+
+# int, default=’auto’. Size of minibatches for stochastic optimizers. If the solver is ‘lbfgs’, the classifier will not use minibatch. When set to “auto”, batch_size=min(200, n_samples).
+batch_size: 'auto'
+
+# {‘constant’, ‘invscaling’, ‘adaptive’}, default=’constant’. Learning rate schedule for weight updates. Only used when solver='sgd'.
+learning_rate: 'constant'
+
+# float, default=0.001. The initial learning rate used. Only used when solver=’sgd’ or ‘adam’.
+learning_rate_init: 0.001
+
+# float, default=0.5. The exponent for inverse scaling learning rate. It is used in updating effective learning rate when the learning_rate is set to ‘invscaling’. Only used when solver=’sgd’.
+power_t: 0.5
+
+# int, default=200. Maximum number of iterations. The solver iterates until convergence (determined by ‘tol’) or this number of iterations.
+max_iter: 200
+
+# bool, default=True. Whether to shuffle samples in each iteration. Only used when solver=’sgd’ or ‘adam’.
+shuffle: true
+
+# float, default=1e-4. Tolerance for the optimization. When the loss or score is not improving by at least tol for n_iter_no_change consecutive iterations, unless learning_rate is set to ‘adaptive’, convergence is considered to be reached and training stops.
+tol: 0.0001
+
+# float, default=0.9. Momentum for gradient descent update. Should be between 0 and 1. Only used when solver=’sgd’.
+momentum: 0.9
+
+# bool, default=True. Whether to use Nesterov’s momentum. Only used when solver=’sgd’ and momentum > 0.
+nesterovs_momentum: true
+
+# bool, default=False. Whether to use early stopping to terminate training when validation score is not improving. Only effective when solver=’sgd’ or ‘adam’.
+early_stopping: true
+
+# float, default=0.1. The proportion of training data to set aside as validation set for early stopping. Must be between 0 and 1. Only used if early_stopping is True.
+validation_fraction: 0.1
+
+# int, default=10. Maximum number of epochs to not meet tol improvement. Only effective when solver=’sgd’ or ‘adam’.
+n_iter_no_change: 10
+
+# float, default=0.9. Exponential decay rate for estimates of first moment vector in adam, should be in [0, 1). Only used when solver=’adam’.
+beta_1: 0.9
+
+# beta_2float, default=0.999. Exponential decay rate for estimates of second moment vector in adam, should be in [0, 1). Only used when solver=’adam’.
+beta_2: 0.999
+
+# float, default=1e-8. Value for numerical stability in adam. Only used when solver=’adam’.
+epsilon: 0.00000001
+
+# int, default=15000. Only used when solver=’lbfgs’. Maximum number of loss function calls. The solver iterates until convergence (determined by ‘tol’), number of iterations reaches max_iter, or this number of loss function calls.
+max_fun: 15000

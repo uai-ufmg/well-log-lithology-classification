@@ -1,0 +1,16 @@
+dataset: 'geolink'
+data_dir: '/pgeoprj/godeep/ej44/datasets/geolink/LAS_files'
+logs: 
+- 'GR'
+- 'RHOB'
+- 'NPHI'
+- 'DTC'
+logs_info:
+- 'WELL'
+- 'DEPT'
+- 'GR' 
+- 'RHOB'
+- 'NPHI'
+- 'DTC'
+class_col: 'LITHOLOGY'
+num_classes: 27
