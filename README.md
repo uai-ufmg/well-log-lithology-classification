@@ -223,7 +223,7 @@ Weighted F1-Score: 0.6470138832408625
 
 This image file demonstrates the prediction of the trained model, comparing it with the ground truth, which consists in the lithology stracted from the well for each depth. In this case, *15_9_13* represents the nomination of the well used in this plot. 
 
-<img src=Frente2_Benchmark_Litologia/plots/15_9_13_xgb.png>
+<img src=plots/15_9_13_xgb.png>
 
 The rightmost column demonstrate the predictions that our XgBoost model has done over the four well logs: *Gamma Ray, Density, Neutron, Compressional Wave.*
 
