@@ -21,7 +21,7 @@ class Geolink(Data):
             Arguments:
             ---------
                 - directory (str): Path to the directory where data is 
-                - logs (list[str] or tuple[str]): Logs used from Petro data
+                - logs (list[str] or tuple[str]): Logs used from Geolink data
                 - verbose (bool): If True, print progress details. Else, does not print anything.
         """
         

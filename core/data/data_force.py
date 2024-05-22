@@ -21,7 +21,7 @@ class Force(Data):
             Arguments:
             ---------
                 - directory (str): Path to the directory where data is 
-                - logs (list[str] or tuple[str]): Logs used from Petro data
+                - logs (list[str] or tuple[str]): Logs used from Force data
                 - verbose (bool): If True, print progress details. Else, does not print anything.
         """
         
