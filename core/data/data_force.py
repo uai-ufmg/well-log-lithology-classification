@@ -21,7 +21,7 @@ class Force(Data):
             Arguments:
             ---------
                 - directory (str): Path to the directory where data is 
-                - logs (list[str] or tuple[str]): Logs used from Force data
+                - logs (list[str] or tuple[str]): Logs used from Petro data
                 - verbose (bool): If True, print progress details. Else, does not print anything.
         """
         
@@ -60,11 +60,11 @@ class Force(Data):
         """
         r = requests.get(urljoin(self.directory, 'train.zip'))
         files = zipfile.ZipFile(BytesIO(r.content))
-
-        train_data = pd.read_csv( files.open('train.csv'), sep=';' )
-        hidden_test = pd.read_csv( urljoin(self.directory, 'hidden_test.csv'), sep=';' )
-        leaderboard_test_features = pd.read_csv( urljoin(self.directory, 'leaderboard_test_features.csv'), sep=';' )
-        leaderboard_test_target = pd.read_csv( urljoin(self.directory, 'leaderboard_test_target.csv'), sep=';' )
+        
+        train_data = pd.read_csv(files.open('train.csv'), sep=';' )
+        hidden_test = pd.read_csv(urljoin(self.directory, 'hidden_test.csv'), sep=';' )
+        leaderboard_test_features = pd.read_csv(urljoin(self.directory, 'leaderboard_test_features.csv'), sep=';' )
+        leaderboard_test_target = pd.read_csv(urljoin(self.directory, 'leaderboard_test_target.csv'), sep=';' )
 
 
         ## A little of consistency checking

@@ -112,7 +112,7 @@ class Geolink(Data):
                     zip_ref.extractall(os.path.join('datasets', 'geolink'))
 
         self.directory = os.path.join('datasets', 'geolink')
-
+        
         list_wells_files = os.listdir(self.directory)
 
         f = os.path.join(self.directory, list_wells_files[0])
