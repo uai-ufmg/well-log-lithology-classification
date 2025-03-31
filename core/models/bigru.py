@@ -65,7 +65,6 @@ class BiGRU(Model):
             Return:
             ---------
                 - x (torch.Tensor): Output tensor before softmax
-                - probs (torch.Tensor): Output tensor after softmax
         """
         
         x = x.float()
@@ -75,6 +74,5 @@ class BiGRU(Model):
         out, hn = self.gru(x)
 
         x = self.fc(out)
-        probs = self.softmax(x)
         
-        return x, probs
+        return None, x

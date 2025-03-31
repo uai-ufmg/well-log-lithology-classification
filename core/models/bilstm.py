@@ -71,7 +71,6 @@ class BiLSTM(Model):
             Return:
             ---------
                 - x (torch.Tensor): Output tensor before softmax
-                - probs (torch.Tensor): Output tensor after softmax
         """
         
         x = x.float()
@@ -83,8 +82,5 @@ class BiLSTM(Model):
 
         #fullyconnected bidirectional layer
         x = self.fc(out)
-
-        #classification
-        probs = self.softmax(x)
         
-        return x, probs
+        return None, x

@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 
 class LithologyDataset(Dataset):
-    def __init__(self, df:pd.DataFrame, labels:pd.Series, logs:list[str], num_classes:int, seq_size:int=100, interval_size:int=100, well_name_column:str='WELL') -> None:
+    def __init__(self, df:pd.DataFrame, labels:pd.Series, logs:list[str], num_classes:int, seq_size:int=100, interval_size:int=100, well_name_column:str='WELL', lithology_column:str='LITHOLOGY') -> None:
         """
             Arguments:
             ---------
@@ -17,6 +17,7 @@ class LithologyDataset(Dataset):
                 - seq_size (int): Size of sequence sent to the model
                 - interval_size (int): Size of the interval used to extract consecutive sequences
                 - well_name_column (str): Name of the column that indicates the well name in the data
+                - lithology_column (str): Name of the lithology column
             Return:
             ---------
                 None
@@ -30,6 +31,8 @@ class LithologyDataset(Dataset):
         self.seq_size = seq_size
         self.interval_size = interval_size
         self.well_name_column = well_name_column
+        self.lithology_column = lithology_column
+        self.no_missing_logs = self.logs + [self.lithology_column]
         
         self.data['labels'] = labels
         self.list_of_sequences = self.__create_dataset(self.data, verbose=False)
@@ -56,14 +59,14 @@ class LithologyDataset(Dataset):
             wellname = self.list_of_wells[i]
             well_df = df[df[self.well_name_column] == wellname]
 
-            idx_null = well_df[well_df[self.logs].isnull().any(axis=1)].index.tolist()
+            idx_null = [j for j,x in enumerate(well_df[self.no_missing_logs].values) if np.isnan(x).any()]
 
             j=0
             while j < well_df.shape[0]-(self.seq_size-1):
                 
                 sequence = well_df.iloc[j:j+self.seq_size]
                 
-                idx_null = sequence[sequence[self.logs].isnull().any(axis=1)].index.tolist()
+                idx_null = [k for k,x in enumerate(sequence[self.no_missing_logs].values) if np.isnan(x).any()]
                 
                 if idx_null == []:
                     list_of_sequences.append([wellname, sequence[self.logs], sequence['labels']])
@@ -101,4 +104,4 @@ class LithologyDataset(Dataset):
         well_data_torch = torch.from_numpy(sequence_numpy).float()
         labels_torch = torch.from_numpy(labels_numpy).float()
         
-        return wellname, well_data_torch, labels_torch
+        return idx, wellname, well_data_torch, labels_torch

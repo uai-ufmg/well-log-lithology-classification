@@ -44,7 +44,7 @@ def train(model, dataloader, optimizer, criterion, epochs:int, num_classes:int, 
         else:
             iterator_dataloader = enumerate(dataloader)
         
-        for i, (wellnames, well_data_torch, labels_torch) in iterator_dataloader:
+        for i, (idxs, wellnames, well_data_torch, labels_torch) in iterator_dataloader:
             
             well_data_torch = well_data_torch.long().to(device)
             labels_torch = labels_torch.to(device)
@@ -127,7 +127,7 @@ class Model(nn.Module, ABC):
             else:
                 dataloader_iterator = enumerate(dataloader)
                 
-            for i, (wellnames, well_data_torch, labels_torch) in dataloader_iterator:
+            for i, (idxs, wellnames, well_data_torch, labels_torch) in dataloader_iterator:
 
                 well_data_torch = well_data_torch.long().to(self.device)
                 labels_torch = labels_torch.long().to(self.device)
