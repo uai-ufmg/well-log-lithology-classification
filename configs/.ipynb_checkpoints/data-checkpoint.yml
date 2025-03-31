@@ -1,6 +1,0 @@
-split_form: 'kfold'
-scaling_method: 'standard'
-n_splits: 5
-shuffle: true
-test_size: 0.1
-val_size: 0.2

@@ -1,0 +1,19 @@
+# IForest
+n_estimators_if: 100
+max_features_if: 4
+
+# Random Forest
+n_estimators_rf: 80
+max_depth_rf: 6
+criterion_rf: "gini"
+
+# GBDT
+n_estimators_gbdt: 50
+max_depth_gbdt: 4
+loss_gbdt: "log_loss"
+learning_rate_gbdt: 0.05
+
+# ET
+n_estimators_et: 80
+max_depth_et: 8
+criterion_et: "gini"

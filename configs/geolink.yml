@@ -7,10 +7,11 @@ logs:
 - 'DTC'
 logs_info:
 - 'WELL'
-- 'DEPT'
+- 'DEPTH_MD'
 - 'GR' 
 - 'RHOB'
 - 'NPHI'
 - 'DTC'
+- 'LITHOLOGY'
 class_col: 'LITHOLOGY'
 num_classes: 27

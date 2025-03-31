@@ -12,5 +12,6 @@ logs_info:
 - 'RHOB'
 - 'NPHI'
 - 'DTC'
+- 'LITHOLOGY'
 class_col: 'LITHOLOGY'
 num_classes: 11

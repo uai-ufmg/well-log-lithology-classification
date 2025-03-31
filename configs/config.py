@@ -20,6 +20,7 @@ class ConfigArgs():
         parser.add_argument("--save_dir", type=Path, default=Path("trained_models"), help="Path to save model weights")
         
         parser.add_argument("--output_dir", type=Path, default=Path("results"), help="Path to save logs")
+        parser.add_argument("--plot_dir", type=Path, default=Path("plots"), help="Path to save plots")
         parser.add_argument("--config_dir", type=Path, default=Path("configs"), help="Path to load config files")
         parser.add_argument("--verbose", type=self.__str2bool, nargs='?', const=True, default=False, help="Use verbose")
         
@@ -34,81 +35,137 @@ class ConfigArgs():
             return False
         else:
             raise argparse.ArgumentTypeError('Boolean value expected.')
+
+    def standardize_model_name(self, model_name: str) -> (str, str):
+        """
+        Given a user-provided model_name (possibly with variations/spaces/hyphens),
+        return a canonical (model_name, cfg_model_file) tuple.
+        Arguments:
+        ---------
+            - model_name (str): Raw model name string.
+        Return:
+        ---------
+            - MODEL_MAP[key](tuple): Tuple containing (model_name, cfg_model_file).
+        """
+        
+        # Map all possible inputs to a canonical pair:
+        #   - The first item in the tuple is the canonical 'model_name'
+        #   - The second item is the 'cfg_model_file' used later on
+        MODEL_MAP = {
+            # NB
+            'naive_bayes':    ('nb', 'naive_bayes'),
+            'naive bayes':    ('nb', 'naive_bayes'),
+            'nb':             ('nb', 'naive_bayes'),
+    
+            # XGB
+            'xgb':            ('xgb', 'xgboost'),
+            'xgboost':        ('xgb', 'xgboost'),
+    
+            # RF
+            'rf':             ('rf', 'random_forest'),
+            'random_forest':  ('rf', 'random_forest'),
+            'random forest':  ('rf', 'random_forest'),
+    
+            # MLP
+            'mlp':            ('mlp', 'mlp'),
+    
+            # BiLSTM
+            'bilstm':         ('bilstm', 'bilstm'),
+            'bi_lstm':        ('bilstm', 'bilstm'),
+            'bi-lstm':        ('bilstm', 'bilstm'),
+            'bi lstm':        ('bilstm', 'bilstm'),
+    
+            # BiGRU
+            'bigru':          ('bigru', 'bigru'),
+            'bi_gru':         ('bigru', 'bigru'),
+            'bi-gru':         ('bigru', 'bigru'),
+            'bi gru':         ('bigru', 'bigru'),
+    
+            # CNN
+            'cnn':            ('cnn', 'cnn'),
+    
+            # ResNet
+            'resnet':         ('resnet', 'resnet'),
+    
+            # AdaBoost-Transformer
+            'adaboost_transformer':  ('adaboost_transformer', 'adaboost_transformer'),
+            'adaboost-transformer':  ('adaboost_transformer', 'adaboost_transformer'),
+            'transformer':           ('adaboost_transformer', 'adaboost_transformer'),
+            'ada_transformer':       ('adaboost_transformer', 'adaboost_transformer'),
+            'ada-transformer':       ('adaboost_transformer', 'adaboost_transformer'),
+    
+            # HNFCL / Tri-Training
+            'hnfcl':         ('hnfcl', 'hnfcl'),
+            'tri_training':  ('hnfcl', 'hnfcl'),
+            'tri-training':  ('hnfcl', 'hnfcl'),
+        }
+    
+        key = model_name.strip().lower()
+        if key in MODEL_MAP:
+            return MODEL_MAP[key]
+        else:
+            raise NotImplementedError(f"Model name '{model_name}' does not exist")
     
     def parse_args(self):
-        
+
+        cfg = dict()        
         args = self.parser.parse_args()
         
-        model_name = args.model
-        dataset = args.dataset
-        seq_size = args.seq_size
-        weighted = args.weighted
-        config_dir = args.config_dir
-        
-        save_model = args.save_model
-        save_dir = args.save_dir
-        
-        output_dir = args.output_dir
-        verbose = args.verbose
+        model_name = args.model.lower()
+        dataset = args.dataset.lower()
         run = args.run
-        
-        cfg = dict()
-        
-        cfg['seq_size'] = seq_size
-        cfg['weighted'] = weighted
 
-        cfg['config_dir'] = config_dir
-        cfg['save_model'] = save_model
-        cfg['save_dir'] = save_dir
-        cfg['output_dir'] = output_dir
+        cfg['dataset'] = dataset
         
-        cfg['verbose'] = verbose
-        
-        model_name = model_name.lower()
-        if model_name == 'naive_bayes' or model_name == 'nb' or model_name == 'naive bayes':
-            model_name = 'nb'
-            cfg_model_file = 'naive_bayes'
-        elif model_name == 'xgb' or model_name == 'xgboost':
-            model_name = 'xgb'
-            cfg_model_file = 'xgboost'
-        elif model_name == 'rf' or model_name == 'random_forest' or model_name == 'random forest':
-            model_name = 'rf'
-            cfg_model_file = 'random_forest'
-        elif model_name == 'mlp':
-            model_name = 'mlp'
-            cfg_model_file = 'mlp'
-        elif model_name == 'bilstm' or model_name == 'bi_lstm' or model_name == 'bi-lstm' or model_name == 'bi lstm':
-            model_name = 'bilstm'
-            cfg_model_file = 'bilstm'
-        elif model_name == 'bigru' or model_name == 'bi_gru' or model_name == 'bi-gru' or model_name == 'bi gru':
-            model_name = 'bigru'
-            cfg_model_file = 'bigru'
-        elif model_name == 'cnn':
-            model_name = 'cnn'
-            cfg_model_file = 'cnn'
-        else:
-            raise NotImplementedError('Model name does not exist')
+        cfg['seq_size'] = args.seq_size
+        cfg['weighted'] = args.weighted
 
+        cfg['config_dir'] = args.config_dir
+        cfg['save_model'] = args.save_model
+        cfg['save_dir'] = args.save_dir
+        cfg['output_dir'] = args.output_dir
+        cfg['plot_dir'] = args.plot_dir
+        
+        cfg['verbose'] = args.verbose
+
+        # Mapping model_name provided to a standard model_name and cfg_file_name
+        model_name, cfg_model_file = standardize_model_name(model_name)
         cfg['model_name'] = model_name
-        cfg['dataset'] = dataset.lower()
         
-        if model_name == 'cnn' or model_name == 'bigru'or model_name == 'bilstm':
-            cfg['filename'] = f'{args.model}_{args.dataset}_{args.seq_size}_{args.run}'
+        dl_models = {
+            'adaboost_transformer',
+            'bigru',
+            'bilstm',
+            'cnn',
+            'resnet'
+        }
+    
+        if model_name in dl_models:
+            cfg['filename'] = f"{args.model}_{args.dataset}_{args.seq_size}_{args.run}_{args.weighted}"
             cfg['input_format'] = 'dl'
         else:
-            cfg['filename'] = f'{args.model}_{args.dataset}_{args.run}'
+            cfg['filename'] = f"{args.model}_{args.dataset}_{args.run}_{args.weighted}"
             cfg['input_format'] = 'ml'
 
-        with open(os.path.join(cfg['config_dir'], f'data.yml'), 'r') as file:
-            cfg_data = yaml.safe_load(file)
-            cfg = {**cfg,**cfg_data}
+        # Merge data.yml
+        data_file = os.path.join(cfg['config_dir'], "data.yml")
+        if os.path.exists(data_file):
+            with open(data_file, 'r') as f:
+                cfg_data = yaml.safe_load(f) or {}
+                cfg.update(cfg_data)
 
-        with open(os.path.join(cfg['config_dir'], f'{dataset}.yml'), 'r') as file:
-            cfg_dataset = yaml.safe_load(file)
-            cfg = {**cfg,**cfg_dataset}
+        # Merge {dataset}.yml
+        dataset_file = os.path.join(cfg['config_dir'], f"{dataset}.yml")
+        if os.path.exists(dataset_file):
+            with open(dataset_file, 'r') as f:
+                cfg_dataset = yaml.safe_load(f) or {}
+                cfg.update(cfg_dataset)
 
-        with open(os.path.join(cfg['config_dir'], f'{cfg_model_file}.yml'), 'r') as file:
-            cfg_model = yaml.safe_load(file)
-            cfg = {**cfg,**cfg_model}
+        # Merge the {model}.yml
+        model_file = os.path.join(cfg['config_dir'], f"{cfg_model_file}.yml")
+        if os.path.exists(model_file):
+            with open(model_file, 'r') as f:
+                cfg_model = yaml.safe_load(f) or {}
+                cfg.update(cfg_model)
         
         return cfg
