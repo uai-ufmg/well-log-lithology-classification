@@ -1,13 +1,13 @@
-# well-log-lithology-classification
+# Lithology classification on well log data - Benchmark
 
-Repository with the code for the experiments of the paper **A Benchmark for Lithology Classification Based on Well Log Data**
+Repository with the code for the experiments of the paper **Lithology classification based on well log data: A benchmark for machine learning models**
 
 # Execution
 
-To execute the lithology benchmark program, follow these bash commands:
+To execute the lithology benchmark, follow these bash commands:
 
 ```
-cd Frente2-Benchmark_Litologia
+cd well-log-lithology-classification
 python3 benchmark.py --model <model> --dataset <dataset> --seq_size <n> --run <x>
 ```
 
@@ -21,6 +21,9 @@ Available Models:
 - BiLSTM (bilstm)
 - BiGRU (bigru)
 - CNN (cnn)
+- ResNet (resnet)
+- AdaBoost-Transformer (transformer)
+- Hybrid Noise Label Filtering and Correction Framework (HNFCL)
 
 Available Datasets:
 - Force (force)
@@ -39,7 +42,7 @@ All execution parameters:
 | --output_dir     | Directory used for saving the model evaluation results.                         | results        | Any existing path            |
 | --config_dir     | Directory used for loading the config yml files.                                | configs        | Any existing path            |
 | --verbose        | Print the evolution of steps during execution                                   | False          | True, False                  |
-| --run            | Number of the code execution (useful for testing multiple different configs).   | 1              | Positive integer             |
+| --run            | Number of the code execution (useful for multiple runs using the same configs). | 1              | Positive integer             |
 
 For example, to run the benchmark with XGBoost on the Force dataset with a sequence size of 1 for the third execution, the command would be:
 
@@ -88,7 +91,7 @@ The shallow methods are primarily implemented using the [Scikit Learn](https://s
 
 #### Deep Models:
 
-Deep models can be configured in their own yml file, in the format `{model}.yml`. The Multi-layered perceptron was implemented with scikit-learn MLPClassifier, and its parameters follow its documentation [MLP](https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPClassifier.html). Other Deep Learning models (currently **BiLSTM, BiGRU, and CNN**) have common and specific hyperparameter, as follows:
+Deep models can be configured in their own yml file, in the format `{model}.yml`. The Multi-layered perceptron was implemented with scikit-learn MLPClassifier, and its parameters follow its documentation [MLP](https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPClassifier.html). Other Deep Learning models (currently **BiLSTM, BiGRU, CNN, ResNet, and Adaboost Transformer**) have common and specific hyperparameter, as follows:
 
 | Common parameters | Description                                                  | Possible Values               |
 |-------------------|--------------------------------------------------------------|-------------------------------|
@@ -99,19 +102,27 @@ Deep models can be configured in their own yml file, in the format `{model}.yml`
 
 The following are the specific parameters for the Recurrent Networks (BiLSTM and BiGRU):
 
-| RNN parameters    | Description                                                  | Possible Values               |
-|-------------------|--------------------------------------------------------------|-------------------------------|
-| hidden_size       | Number of units in the hidden state of the RNN.             | Integer greater than 0       |
-| num_layers        | Number of recurrent layers.                                  | Integer greater than 0       |
-| batch_first       | If true, input and output tensors are provided as (batch_size, sequence_length, feature_dim). | True, False |
-| dropout           | Dropout probability, applied to the input and recurrent layers. | Floating point number      |
-| bidirectional     | If true, RNNs are bidirectional.                            | True, False                  |
+| RNN parameters    | Description                                                                                   | Possible Values         |
+|-------------------|-----------------------------------------------------------------------------------------------|-------------------------|
+| hidden_size       | Number of units in the hidden state of the RNN.                                               | Integer greater than 0  |
+| num_layers        | Number of recurrent layers.                                                                   | Integer greater than 0  |
+| batch_first       | If true, input and output tensors are provided as (batch_size, sequence_length, feature_dim). | True, False             |
+| dropout           | Dropout probability, applied to the input and recurrent layers.                               | Floating point number   |
+| bidirectional     | If true, RNNs are bidirectional.                                                              | True, False             |
 
-The following are the specific parameters for the Convolutional Network (CNN):
+The following are the specific parameters for the Convolutional Networks (CNN and ResNet):
 
-| CNN parameters    | Description                                                  | Possible Values               |
+| CNNs parameters   | Description                                                  | Possible Values               |
 |-------------------|--------------------------------------------------------------|-------------------------------|
-| num_logs          | Number of logs to be printed during training.                | Integer greater than 0       |
+| num_logs          | Number of logs to be printed during training.                | Integer greater than 0        |
+
+The following are the specific parameters for the Transformer (Adaboost Transformer):
+
+| Transformer parameters | Description                                                  | Possible Values                     |
+|------------------------|--------------------------------------------------------------|-------------------------------------|
+| n_classifiers          | Number of transformers in the Adaboost Framework             | Integer greater than 0              |
+| hidden_dim             | Hidden Dimension in each Transformer Encoder architecture    | Integer greater than 0              |
+| dropout                | Dropout parameter for each Transformer Encoder               | Floating point number from 0 to 1   |
 
 ## Methodology:
 
@@ -144,88 +155,93 @@ Overall, summarizing the benchmark proposal we have:
 | Logs     | GR, DTC, NPHI, RHOB |
 |Sequence Lengths| 1, 50|
 | Data split | 5-fold cross validation|
-| Metrics| A, F1, MCC, wP|
-| Models| XgBoost, MLP, BiGRU, CNN|
+| Metrics| A, MCC, P, R|
+| Models| Adaboost Transformer, BiGRU, XgBoost, MLP |
 
 ## Run example
 
-This section is a sample of the output of our benchmark. As XgBoost was the baseline, this will demonstrate how the program outputs, running with the FORCE 2020 dataset.
+This section is a sample of the output of our benchmark. This will demonstrate how the program outputs, running with the FORCE 2020 dataset.
 
 Using the following command:
 
-    $python3 benchmark.py --model xgb --dataset force  --run 1
+    $python3 benchmark.py --model transformer --dataset force --run 1
 
 
 the program will output the following files:
 
-#### results/xgb_force_1:
+#### results/transformers_force_50_1_False:
 
 Consists in the results of all metrics used to each fold, as the default training strategy is 5-fold cross validation.
 
 ```
 FOLD 1
-Accuracy: 0.7521060611866197
-Weighted Accuracy: 0.43768505453534845
-MCC: 0.5276648686490152
-Precision: 0.5780822814294108
-Weighted Precision: 0.6908293726931463
-Recall: 0.43768505453534845
-Weighted Recall: 0.7521060611866197
-F1-Score: 0.45217145808192005
-Weighted F1-Score: 0.6961306615449118
+Accuracy: 0.7409353507565337
+Weighted Accuracy: 0.3620584336092069
+MCC: 0.514034109523071
+Precision: 0.5391668288127979
+Weighted Precision: 0.6991680055690951
+Recall: 0.3620584336092069
+Weighted Recall: 0.7409353507565337
+F1-Score: 0.39147883643536086
+Weighted F1-Score: 0.7091174727974746
+Training Time: 6681.516830921173
 
 FOLD 2
-Accuracy: 0.7245828074603843
-Weighted Accuracy: 0.34601576240255755
-MCC: 0.4918392722087577
-Precision: 0.4433642179411221
-Weighted Precision: 0.650603933620286
-Recall: 0.34601576240255755
-Weighted Recall: 0.7245828074603843
-F1-Score: 0.3643292385413993
-Weighted F1-Score: 0.6685090987351411
+Accuracy: 0.7271345387680049
+Weighted Accuracy: 0.36040440813606633
+MCC: 0.5080825677985306
+Precision: 0.5017825866673316
+Weighted Precision: 0.6785100344892573
+Recall: 0.36040440813606633
+Weighted Recall: 0.7271345387680049
+F1-Score: 0.39095160089205566
+Weighted F1-Score: 0.6931489280924452
+Training Time: 6757.57267165184
 
 FOLD 3
-Accuracy: 0.7301236457064052
-Weighted Accuracy: 0.3016504591203111
-MCC: 0.49266254182745317
-Precision: 0.4413012231305751
-Weighted Precision: 0.6772869581114742
-Recall: 0.3016504591203111
-Weighted Recall: 0.7301236457064052
-F1-Score: 0.30866079654879414
-Weighted F1-Score: 0.674751992497194
+Accuracy: 0.7426091081593927
+Weighted Accuracy: 0.29061691844567605
+MCC: 0.5322054855270353
+Precision: 0.34180821946877066
+Weighted Precision: 0.701631019733321
+Recall: 0.29061691844567605
+Weighted Recall: 0.7426091081593927
+F1-Score: 0.28679321069183944
+Weighted F1-Score: 0.7099570248177435
+Training Time: 6428.15208029747
 
 FOLD 4
-Accuracy: 0.6743926615797492
-Weighted Accuracy: 0.30834495473096113
-MCC: 0.44272613458327964
-Precision: 0.29443032044097206
-Weighted Precision: 0.6200932499722089
-Recall: 0.22425087616797176
-Weighted Recall: 0.6743926615797492
-F1-Score: 0.239633925937933
-Weighted F1-Score: 0.6317931307655439
+Accuracy: 0.7035448717948718
+Weighted Accuracy: 0.411834177690789
+MCC: 0.5003051018096201
+Precision: 0.36236749750759545
+Weighted Precision: 0.6706353057810158
+Recall: 0.2995157655933011
+Weighted Recall: 0.7035448717948718
+F1-Score: 0.31932589507597037
+Weighted F1-Score: 0.6764403200956371
+Training Time: 6957.990426540375
 
 FOLD 5
-Accuracy: 0.699553824224318
-Weighted Accuracy: 0.35952303383630696
-MCC: 0.4648916232455772
-Precision: 0.4746699047870535
-Weighted Precision: 0.6409600459721931
-Recall: 0.35952303383630696
-Weighted Recall: 0.699553824224318
-F1-Score: 0.36190986127565594
-Weighted F1-Score: 0.6470138832408625
+Accuracy: 0.7119490071095856
+Weighted Accuracy: 0.3680166906151434
+MCC: 0.4982074234156329
+Precision: 0.47307580667626525
+Weighted Precision: 0.6810864769362498
+Recall: 0.3680166906151434
+Weighted Recall: 0.7119490071095856
+F1-Score: 0.36602751926301624
+Weighted F1-Score: 0.6783419580146866
+Training Time: 6520.793189525604
 ```
 
-#### plots/15_9_13_xgb.png:
+#### results/transformers_force_50_1_False.png:
 
-This image file demonstrates the prediction of the trained model, comparing it with the ground truth, which consists in the lithology stracted from the well for each depth. In this case, *15_9_13* represents the nomination of the well used in this plot. 
+This image file demonstrates the prediction of the trained model, comparing it with the ground truth, which consists in the lithology stracted from the well for each depth. In this case, *16_10_5* represents the nomination of the well used in this plot. 
 
-<img src=plots/15_9_13_xgb.png>
+<img src=Frente2_Benchmark_Litologia/results/transformer_force_50_1_False.png>
 
-The rightmost column demonstrate the predictions that our XgBoost model has done over the four well logs: *Gamma Ray, Density, Neutron, Compressional Wave.*
+The first column shows the ground truth lithology labels for the well, while the second column shows the predictions that the Adaboost Transformer has done given the four well logs: *Gamma Ray, Density, Neutron, Compressional Wave.*
 
 
 # Adding Models/Datasets/Metrics
@@ -236,7 +252,7 @@ There are a few steps that should be followed when introducing a model:
 
 1. If it is a **Deep Learning model**, it is important to add a model file into the models folder (`core/models/`).
     - The model class should inherit from the model template in `model_template.py` to get the fit and test functions.
-    - The output from the model should be a one hot vector of probabilities, i.e., for each depth of the sequence input sequence, the model should output a vector of *k* probabilities, where *k* is the number of lithology classes.
+    - The output from the model should be a one hot vector of probabilities, i.e., for each depth of the sequence input sequence, the model should output a vector of k probabilities, where k is the number of lithology classes.
 
 2. If it is a **Traditional ML model**, it is important that it has the fit and predict functions.
     
@@ -264,6 +280,7 @@ Now you can evaluate your new model!
     - Remember to import the dataset class from the dataset file.
 
 Now you can evaluate models with your new dataset!
+
 
 ## Metrics
     
