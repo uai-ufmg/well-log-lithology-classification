@@ -129,7 +129,7 @@ class ConfigArgs():
         cfg['verbose'] = args.verbose
 
         # Mapping model_name provided to a standard model_name and cfg_file_name
-        model_name, cfg_model_file = standardize_model_name(model_name)
+        model_name, cfg_model_file = self.standardize_model_name(model_name)
         cfg['model_name'] = model_name
         
         dl_models = {
